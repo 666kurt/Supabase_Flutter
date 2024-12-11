@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'auth_screen.dart';
+import 'auth_gate.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -18,7 +18,7 @@ class SupabaseFlutter extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthScreen(),
+      home: AuthGate(),
     );
   }
 }
