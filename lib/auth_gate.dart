@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supabase_flutter_auth/auth_screen.dart';
+import 'package:supabase_flutter_auth/sign_in_screen.dart';
 
 import 'home_screen.dart';
 
@@ -16,7 +16,7 @@ class AuthGate extends StatelessWidget {
         if (session != null) {
           return HomeScreen();
         } else {
-          return const AuthScreen();
+          return SignInScreen();
         }
       },
     );
