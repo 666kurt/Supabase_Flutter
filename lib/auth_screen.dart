@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter_auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter_auth/auth_bloc/auth_bloc.dart';
+import 'package:supabase_flutter_auth/auth_bloc/auth_event.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,55 +12,12 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final AuthService _authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
   bool isSignInState = true;
-
-  void signIn() async {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-
-    if (email.isNotEmpty && password.isNotEmpty) {
-      try {
-        await _authService.signIn(email, password);
-        _emailController.clear();
-        _passwordController.clear();
-      } catch (error) {
-        throw Exception(error.toString());
-      }
-    } else {
-      _emailController.clear();
-      _passwordController.clear();
-      throw Exception("TextField's is empty");
-    }
-  }
-
-  void signUp() async {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-    final String confirmPassword = _confirmPasswordController.text;
-
-    if ((email.isNotEmpty && password.isNotEmpty) &&
-        (password == confirmPassword)) {
-      try {
-        await _authService.signUp(email, password);
-        _emailController.clear();
-        _passwordController.clear();
-        _confirmPasswordController.clear();
-      } catch (error) {
-        throw Exception(error.toString());
-      }
-    } else {
-      _emailController.clear();
-      _passwordController.clear();
-      _confirmPasswordController.clear();
-      throw Exception("TextField's is empty");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +61,24 @@ class _AuthScreenState extends State<AuthScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CupertinoButton.filled(
-                onPressed: isSignInState ? signIn : signUp,
+                onPressed: () {
+                  if (isSignInState) {
+                    context.read<AuthBloc>().add(
+                          SignInEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
+                        );
+                  } else {
+                    context.read<AuthBloc>().add(
+                          SignUpEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            confirmPassword: _confirmPasswordController.text,
+                          ),
+                        );
+                  }
+                },
                 child: Text(isSignInState ? "Sign In" : "Sign up"),
               ),
             ),
