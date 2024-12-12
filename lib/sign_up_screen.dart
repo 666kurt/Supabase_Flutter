@@ -1,38 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter_auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter_auth/auth_bloc/auth_bloc.dart';
+import 'package:supabase_flutter_auth/auth_bloc/auth_event.dart';
 
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({super.key});
 
-  final AuthService _authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-
-  void signUp() async {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-    final String confirmPassword = _confirmPasswordController.text;
-
-    if ((email.isNotEmpty && password.isNotEmpty) &&
-        (password == confirmPassword)) {
-      try {
-        await _authService.signUp(email, password);
-        _emailController.clear();
-        _passwordController.clear();
-        _confirmPasswordController.clear();
-      } catch (error) {
-        throw Exception(error.toString());
-      }
-    } else {
-      _emailController.clear();
-      _passwordController.clear();
-      _confirmPasswordController.clear();
-      throw Exception("TextField's is empty");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +69,15 @@ class SignUpScreen extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CupertinoButton.filled(
-                onPressed: signUp,
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        SignUpEvent(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          confirmPassword: _passwordController.text,
+                        ),
+                      );
+                },
                 child: const Text("Sign Up"),
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter_auth/auth_bloc/auth_bloc.dart';
 import 'auth_gate.dart';
 
 void main() async {
@@ -16,9 +18,12 @@ class SupabaseFlutter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthGate(),
+      home: BlocProvider(
+        create: (context) => AuthBloc(),
+        child: const AuthGate(),
+      ),
     );
   }
 }
